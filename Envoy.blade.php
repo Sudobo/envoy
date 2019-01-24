@@ -1,4 +1,4 @@
-@servers(['development' => 'user@server', 'production' => 'user@server'])
+@servers(['development' => 'toitx@222.255.46.152', 'production' => 'user@server'])
 
 {{-- Configuration section --}}
 @setup
@@ -11,10 +11,10 @@
 | The git repository location.
 |
 */
-
+$app = '';
 $repo = ''; //configure the repo uri
-$branch = isset($branch) ? $branch : "master";
-
+$slack_hook = ''; //configure the hook uri
+$slack_channel = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +75,9 @@ $shared = [
 /*---- Check for required params ----*/
 if ( ! isset($on) ) {
 throw new Exception('The --on option is required.');
+}
+if (!isset($branch)) {
+throw new Exception('The --branch option is required.');
 }
 
 /* Set default value for args */
@@ -152,7 +155,7 @@ $apache_etc = '';
 
 {{-- Install frotend assets --}}
 @task('assets:install', ['on' => $on])
-    @if(isset($a))
+    @if(isset($asset))
         cd {{ $release_dir }};
         npm install;
         bower install;
@@ -163,7 +166,7 @@ $apache_etc = '';
 
 {{-- Build frotend assets --}}
 @task('assets:build', ['on' => $on])
-    @if(isset($a))
+    @if(isset($asset))
         cd {{ $release_dir }};
         gulp;
     @else
@@ -235,3 +238,7 @@ $apache_etc = '';
         echo "Enjoy (Envoy)."
     @endif
 @endtask
+
+@after
+    @slack($slack_hook, $slack_channel, "State {$task} ( {$app} ) is now SUCCEEDED: {$repo}")
+@endafter
