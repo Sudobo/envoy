@@ -79,6 +79,9 @@ throw new Exception('The --on option is required.');
 
 /* Set default value for args */
 $seed = isset($seed) ? '--seed' : '';
+$refresh = isset($refresh) ? ':refresh' : '';
+$php_etc = '';
+$apache_etc = '';
 
 @endsetup
 
@@ -126,16 +129,11 @@ $seed = isset($seed) ? '--seed' : '';
 
 {{-- Migrate the databases --}}
 @task('migrate', ['on' => $on])
-    @if(isset($m))
-        php {{ $release_dir }}/artisan migrate --force {{$seed}} --no-interaction;
+    @if(isset($migrate))
+        php {{ $release_dir }}/artisan{{$refresh}} migrate --force {{$seed}} --no-interaction;
     @else
-        echo "No migration found.";
+        echo "No new migration found."
     @endif
-@endtask
-
-{{-- Migrate and refresh the database --}}
-@task('migrate:refresh', ['on' => $on])
-    php {{ $release_dir }}/artisan migrate:refresh {{ $seed }} --force --no-interaction;
 @endtask
 
 {{-- Set permissions for various files and directories --}}
@@ -175,10 +173,10 @@ $seed = isset($seed) ? '--seed' : '';
 
 {{-- Run tests--}}
 @task('tests', ['on' => $on])
-    @if(isset($i))
+    @if(isset($test))s
         {{ $release_dir }}/vendor/bin/phpunit {{ $release_dir }};
     @else
-        echo "No line has tested.";
+        echo "No file are tested.";
     @endif
 @endtask
 
@@ -221,4 +219,19 @@ $seed = isset($seed) ? '--seed' : '';
     ln -nfs {{ $release_dir }} {{ $app_dir }}/current;
     echo "{{ $password }}" | sudo -S chown -R www-data {{ $app_dir }}/current;
     echo "All symlinks have been set";
+@endtask
+
+{{--Reboot system--}}
+@task('reboot', ['on' => $on])
+    @if(isset($reboot))
+        @if(isset($password))
+            echo "{{ $password }}" | sudo -S {{ $php_etc }} restart
+            echo "{{ $password }}" | sudo -S {{ $apache_etc }} restart
+        @else
+            sudo {{ $php_etc }} restart
+            sudo {{ $apache_etc }} restart
+        @endif
+    @else
+        echo "Enjoy (Envoy)."
+    @endif
 @endtask
