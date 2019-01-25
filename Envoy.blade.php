@@ -2,6 +2,8 @@
 
 {{-- Configuration section --}}
 @setup
+require __DIR__.'/vendor/autoload.php';
+(new \Dotenv\Dotenv(__DIR__, '.env'))->load();
 
 /*
 |--------------------------------------------------------------------------
@@ -11,10 +13,10 @@
 | The git repository location.
 |
 */
-$app = '';
-$repo = ''; //configure the repo uri
-$slack_hook = ''; //configure the hook uri
-$slack_channel = '';
+$app = env('APP_NAME');
+$repo = env('APP_REPO'); //configure the repo uri
+$slack_hook = env('SLACK_HOOK'); //configure the hook uri
+$slack_channel = env('SLACK_CHANEL');
 
 /*
 |--------------------------------------------------------------------------
@@ -25,13 +27,9 @@ $slack_channel = '';
 |
 */
 
-if (!isset($app_dir)) {
-    $app_dir = '/var/www/html';
-}
-
+$app_dir = isset($app_dir) ? $app_dir : env('APP_DIR', '/var/www/html');
 $releases_dir =  $app_dir . '/releases';
 $release_dir  =  $app_dir . '/releases/' . date('YmdHis');
-
 
 /*
 |--------------------------------------------------------------------------
