@@ -40,6 +40,7 @@ MacOS, Linux systems.
 |  -v/vv/vvv, --verbose | Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug | |
 
 **ENVIRONMENT**
+
 Next, we'll setting up delivery environment, but we need add environment variables:
 
 ``` 
