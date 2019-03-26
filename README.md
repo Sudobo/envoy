@@ -39,6 +39,25 @@ MacOS, Linux systems.
 |  -n, --no-interaction | Do not ask any interactive question | |
 |  -v/vv/vvv, --verbose | Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug | |
 
+**ENVIRONMENT**
+Next, we'll setting up delivery environment, but we need add environment variables:
+
+``` 
+APP_NAME=Laravel
+APP_REPO=git:abc.git
+SLACK_HOOK=notify
+SLACK_CHANEL=tech
+DEPLOY_DIR=/var/www/html/
+DEPLOYER=deployer
+DEPLOY_HOST=your_server_ip
+```
+
+For delivery our branch of coding.
+
+```
+envoy story_name --on=your_environment --branch=your_branch
+```
+
 **SETUP**
 
 Sometimes, you may need to execute some PHP code before executing your Envoy tasks. You may use the @setup directive to declare variables and do other general PHP work before any of your other tasks are executed:
